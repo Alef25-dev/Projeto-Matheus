@@ -430,7 +430,7 @@
                 <h5 class="mb-0">Consultar Município</h5>
             </div>
             <div class="card-body">
-                <form action="{{ request.path }}" method="GET">
+                <form id="municipioForm" onsubmit="handleSubmit(event)">
                     <div class="mb-3">
                         <label for="co_municipio" class="form-label">Código do Município</label>
                         <input type="number" class="form-control" id="co_municipio" name="co_municipio" required>
@@ -481,6 +481,13 @@
                 dataCard.style.display = 'none';
                 jsonView.style.display = 'block';
             }
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            const co_municipio = document.getElementById('co_municipio').value;
+            const basePath = window.location.pathname.split('/').slice(0, -1).join('/');
+            window.location.href = `${basePath}/${co_municipio}`;
         }
     </script>
 </body>
