@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ titulo }} - Dados ENEM</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #34495e;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-size: 0.95em;
+        }
+
+        .sidebar-menu a i {
+            margin-right: 8px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-menu a:hover {
+            background-color: #34495e;
+            transform: translateX(5px);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            margin-left: 250px;
+            background-color: white;
+        }
+
+        .menu-category {
+            color: #95a5a6;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            padding: 5px 10px;
+            border-bottom: 1px solid #34495e;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background-color: #2c3e50;
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+            padding: 15px 20px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .form-control {
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+
+        .btn-primary {
+            background-color: #2c3e50;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+
+        .btn-primary:hover {
+            background-color: #34495e;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            padding: 10px;
+            background-color: #fde8e8;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .data-card {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .data-value {
+            font-size: 2em;
+            color: #2c3e50;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .data-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .view-toggle {
+            margin-top: 20px;
+        }
+
+        .view-toggle .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .view-toggle .btn {
+            padding: 8px 15px;
+            border: 1px solid #2c3e50;
+            background-color: white;
+            color: #2c3e50;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .view-toggle .btn.active {
+            background-color: #2c3e50;
+            color: white;
+        }
+
+        .view-toggle .btn:hover {
+            background-color: #34495e;
+            color: white;
+        }
+
+        .json-view {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Menu</h2>
+        <ul class="sidebar-menu">
+            <li><a href="/"><i>📊</i> Dashboard</a></li>
+                        
+            <li class="menu-category">📚 Desempenho Acadêmico</li>
+            <li><a href="/enem/humanas"><i>📝</i> Ciências Humanas</a></li>
+            <li><a href="/enem/natureza"><i>🔬</i> Ciências da Natureza</a></li>
+            <li><a href="/enem/linguagens"><i>📚</i> Linguagens</a></li>
+            <li><a href="/enem/matematica"><i>📐</i> Matemática</a></li>
+
+            <li class="menu-category">🏫 Tipo de Escola</li>
+            <li><a href="/enem/fed_priv"><i>🏛️</i> Federal/Particular</a></li>
+            <li><a href="/enem/est_mun"><i>🏢</i> Estadual/Municipal</a></li>
+
+            <li class="menu-category">💻 Acesso à Tecnologia</li>
+            <li><a href="/enem/s_pc"><i>💻</i> Com Computador</a></li>
+            <li><a href="/enem/n_pc"><i>❌</i> Sem Computador</a></li>
+            <li><a href="/enem/s_cel"><i>📱</i> Com Celular</a></li>
+            <li><a href="/enem/n_cel"><i>❌</i> Sem Celular</a></li>
+            <li><a href="/enem/s_int"><i>🌐</i> Com Internet</a></li>
+            <li><a href="/enem/n_int"><i>❌</i> Sem Internet</a></li>
+
+            <li class="menu-category">👥 Demografia</li>
+            <li><a href="/enem/cor_bra_ama"><i>👤</i> Brancos/Amarelos</a></li>
+            <li><a href="/enem/cor_outros"><i>👥</i> Outras Raças</a></li>
+            <li><a href="/enem/masculino"><i>👨</i> Masculino</a></li>
+            <li><a href="/enem/feminino"><i>👩</i> Feminino</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <h1>{{ titulo }}</h1>
+
+        {% if error %}
+        <div class="error-message">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        {% if not co_municipio %}
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Sobre esta rota</h5>
+            </div>
+            <div class="card-body">
+                {% if 'humanas' in request.path %}
+                <p>Esta rota mostra a média de notas em Ciências Humanas para um município específico. Os dados são calculados a partir das notas do ENEM de todos os anos disponíveis.</p>
+                <p class="mt-3"><strong>Como usar:</strong> Acesse <code>/enem/humanas/&lt;co_municipio&gt;</code> substituindo <code>&lt;co_municipio&gt;</code> pelo código do município desejado.</p>
+                <p class="mt-2"><strong>Exemplo:</strong> <code>/enem/humanas/3550308</code> - Média de notas em Ciências Humanas para São Paulo</p>
+                <p class="mt-3"><strong>Formato JSON retornado:</strong></p>
+                <pre class="bg-light p-3 rounded">
+{
+    "co_municipio": 3550308,
+    "uf": "SP",
+    "municipio": "São Paulo",
+    "media_humanas": 523.45
+}</pre>
+                {% elif 'natureza' in request.path %}
+                <p>Esta rota mostra a média de notas em Ciências da Natureza para um município específico. Os dados são calculados a partir das notas do ENEM de todos os anos disponíveis.</p>
+                <p class="mt-3"><strong>Como usar:</strong> Acesse <code>/enem/natureza/&lt;co_municipio&gt;</code> substituindo <code>&lt;co_municipio&gt;</code> pelo código do município desejado.</p>
+                <p class="mt-2"><strong>Exemplo:</strong> <code>/enem/natureza/3550308</code> - Média de notas em Ciências da Natureza para São Paulo</p>
+                <p class="mt-3"><strong>Formato JSON retornado:</strong></p>
+                <pre class="bg-light p-3 rounded">
+{
+    "co_municipio": 3550308,
+    "uf": "SP",
+    "municipio": "São Paulo",
+    "media_natureza": 512.78
+}</pre>
+                {% elif 'linguagens' in request.path %}
+                <p>Esta rota mostra a média de notas em Linguagens para um município específico. Os dados são calculados a partir das notas do ENEM de todos os anos disponíveis.</p>
+                <p class="mt-3"><strong>Como usar:</strong> Acesse <code>/enem/linguagens/&lt;co_municipio&gt;</code> substituindo <code>&lt;co_municipio&gt;</code> pelo código do município desejado.</p>
+                <p class="mt-2"><strong>Exemplo:</strong> <code>/enem/linguagens/3550308</code> - Média de notas em Linguagens para São Paulo</p>
+                <p class="mt-3"><strong>Formato JSON retornado:</strong></p>
+                <pre class="bg-light p-3 rounded">
+{
+    "co_municipio": 3550308,
+    "uf": "SP",
+    "municipio": "São Paulo",
+    "media_linguagens": 534.21
+}</pre>
+                {% elif 'matematica' in request.path %}
+                <p>Esta rota mostra a média de notas em Matemática para um município específico. Os dados são calculados a partir das notas do ENEM de todos os anos disponíveis.</p>
+                <p class="mt-3"><strong>Como usar:</strong> Acesse <code>/enem/matematica/&lt;co_municipio&gt;</code> substituindo <code>&lt;co_municipio&gt;</code> pelo código do município desejado.</p>
+                <p class="mt-2"><strong>Exemplo:</strong> <code>/enem/matematica/3550308</code> - Média de notas em Matemática para São Paulo</p>
+                <p class="mt-3"><strong>Formato JSON retornado:</strong></p>
+                <pre class="bg-light p-3 rounded">
+{
+    "co_municipio": 3550308,
+    "uf": "SP",
+    "municipio": "São Paulo",
+    "media_matematica": 518.92
+}</pre>
+                {% elif 'fed_priv' in request.path %}
+                <p>Esta rota mostra o total de escolas federais e particulares em um município específico. Os dados são somados de todos os anos disponíveis.</p>
+                <p class="mt-3"><strong>Como usar:</strong> Acesse <code>/enem/fed_priv/&lt;co_municipio&gt;</code> substituindo <code>&lt;co_municipio&gt;</code> pelo código do município desejado.</p>
+                <p class="mt-2"><strong>Exemplo:</strong> <code>/enem/fed_priv/3550308</code> - Total de escolas federais e particulares em São Paulo</p>
+                <p class="mt-3"><strong>Formato JSON retornado:</strong></p>
+                <pre class="bg-light p-3 rounded">
+{
+    "co_municipio": 3550308,
+    "uf": "SP",
+    "municipio": "São Paulo",
+    "total_fed_priv": 150
+}</pre>
+                {% elif 'est_mun' in request.path %}
+                <p>Esta rota mostra o total de escolas estaduais e municipais em um município específico. Os dados são somados de todos os anos disponíveis.</p>
+                <p class="mt-3"><strong>Como usar:</strong> Acesse <code>/enem/est_mun/&lt;co_municipio&gt;</code> substituindo <code>&lt;co_municipio&gt;</code> pelo código do município desejado.</p>
+                <p class="mt-2"><strong>Exemplo:</strong> <code>/enem/est_mun/3550308</code> - Total de escolas estaduais e municipais em São Paulo</p>
+                <p class="mt-3"><strong>Formato JSON retornado:</strong></p>
+                <pre class="bg-light p-3 rounded">
+{
+    "co_municipio": 3550308,
+    "uf": "SP",
+    "municipio": "São Paulo",
+    "total_est_mun": 300
+}</pre>
+                {% elif 's_pc' in request.path %}
+                <p>Esta rota mostra o total de alunos com acesso a computador em um município específico. Os dados são somados de todos os anos disponíveis.</p>
+                <p class="mt-3"><strong>Como usar:</strong> Acesse <code>/enem/s_pc/&lt;co_municipio&gt;</code> substituindo <code>&lt;co_municipio&gt;</code> pelo código do município desejado.</p>
+                <p class="mt-2"><strong>Exemplo:</strong> <code>/enem/s_pc/3550308</code> - Total de alunos com acesso a computador em São Paulo</p>
+                <p class="mt-3"><strong>Formato JSON retornado:</strong></p>
+                <pre class="bg-light p-3 rounded">
+{
+    "co_municipio": 3550308,
+    "uf": "SP",
+    "municipio": "São Paulo",
+    "total_s_pc": 25000
+}</pre>
+                {% elif 'n_pc' in request.path %}
+                <p>Esta rota mostra o total de alunos sem acesso a computador em um município específico. Os dados são somados de todos os anos disponíveis.</p>
+                <p class="mt-3"><strong>Como usar:</strong> Acesse <code>/enem/n_pc/&lt;co_municipio&gt;</code> substituindo <code>&lt;co_municipio&gt;</code> pelo código do município desejado.</p>
+                <p class="mt-2"><strong>Exemplo:</strong> <code>/enem/n_pc/3550308</code> - Total de alunos sem acesso a computador em São Paulo</p>
+                <p class="mt-3"><strong>Formato JSON retornado:</strong></p>
+                <pre class="bg-light p-3 rounded">
+{
+    "co_municipio": 3550308,
+    "uf": "SP",
+    "municipio": "São Paulo",
+    "total_n_pc": 15000
+}</pre>
+                {% elif 's_cel' in request.path %}
+                <p>Esta rota mostra o total de alunos com acesso a celular em um município específico. Os dados são somados de todos os anos disponíveis.</p>
+                <p class="mt-3"><strong>Como usar:</strong> Acesse <code>/enem/s_cel/&lt;co_municipio&gt;</code> substituindo <code>&lt;co_municipio&gt;</code> pelo código do município desejado.</p>
+                <p class="mt-2"><strong>Exemplo:</strong> <code>/enem/s_cel/3550308</code> - Total de alunos com acesso a celular em São Paulo</p>
+                <p class="mt-3"><strong>Formato JSON retornado:</strong></p>
+                <pre class="bg-light p-3 rounded">
+{
+    "co_municipio": 3550308,
+    "uf": "SP",
+    "municipio": "São Paulo",
+    "total_s_cel": 35000
+}</pre>
+                {% elif 'n_cel' in request.path %}
+                <p>Esta rota mostra o total de alunos sem acesso a celular em um município específico. Os dados são somados de todos os anos disponíveis.</p>
+                <p class="mt-3"><strong>Como usar:</strong> Acesse <code>/enem/n_cel/&lt;co_municipio&gt;</code> substituindo <code>&lt;co_municipio&gt;</code> pelo código do município desejado.</p>
+                <p class="mt-2"><strong>Exemplo:</strong> <code>/enem/n_cel/3550308</code> - Total de alunos sem acesso a celular em São Paulo</p>
+                <p class="mt-3"><strong>Formato JSON retornado:</strong></p>
+                <pre class="bg-light p-3 rounded">
+{
+    "co_municipio": 3550308,
+    "uf": "SP",
+    "municipio": "São Paulo",
+    "total_n_cel": 5000
+}</pre>
+                {% elif 's_int' in request.path %}
+                <p>Esta rota mostra o total de alunos com acesso à internet em um município específico. Os dados são somados de todos os anos disponíveis.</p>
+                <p class="mt-3"><strong>Como usar:</strong> Acesse <code>/enem/s_int/&lt;co_municipio&gt;</code> substituindo <code>&lt;co_municipio&gt;</code> pelo código do município desejado.</p>
+                <p class="mt-2"><strong>Exemplo:</strong> <code>/enem/s_int/3550308</code> - Total de alunos com acesso à internet em São Paulo</p>
+                <p class="mt-3"><strong>Formato JSON retornado:</strong></p>
+                <pre class="bg-light p-3 rounded">
+{
+    "co_municipio": 3550308,
+    "uf": "SP",
+    "municipio": "São Paulo",
+    "total_s_int": 32000
+}</pre>
+                {% elif 'n_int' in request.path %}
+                <p>Esta rota mostra o total de alunos sem acesso à internet em um município específico. Os dados são somados de todos os anos disponíveis.</p>
+                <p class="mt-3"><strong>Como usar:</strong> Acesse <code>/enem/n_int/&lt;co_municipio&gt;</code> substituindo <code>&lt;co_municipio&gt;</code> pelo código do município desejado.</p>
+                <p class="mt-2"><strong>Exemplo:</strong> <code>/enem/n_int/3550308</code> - Total de alunos sem acesso à internet em São Paulo</p>
+                <p class="mt-3"><strong>Formato JSON retornado:</strong></p>
+                <pre class="bg-light p-3 rounded">
+{
+    "co_municipio": 3550308,
+    "uf": "SP",
+    "municipio": "São Paulo",
+    "total_n_int": 8000
+}</pre>
+                {% elif 'cor_bra_ama' in request.path %}
+                <p>Esta rota mostra o total de alunos brancos e amarelos em um município específico. Os dados são somados de todos os anos disponíveis.</p>
+                <p class="mt-3"><strong>Como usar:</strong> Acesse <code>/enem/cor_bra_ama/&lt;co_municipio&gt;</code> substituindo <code>&lt;co_municipio&gt;</code> pelo código do município desejado.</p>
+                <p class="mt-2"><strong>Exemplo:</strong> <code>/enem/cor_bra_ama/3550308</code> - Total de alunos brancos e amarelos em São Paulo</p>
+                <p class="mt-3"><strong>Formato JSON retornado:</strong></p>
+                <pre class="bg-light p-3 rounded">
+{
+    "co_municipio": 3550308,
+    "uf": "SP",
+    "municipio": "São Paulo",
+    "total_cor_bra_ama": 28000
+}</pre>
+                {% elif 'cor_outros' in request.path %}
+                <p>Esta rota mostra o total de alunos de outras raças em um município específico. Os dados são somados de todos os anos disponíveis.</p>
+                <p class="mt-3"><strong>Como usar:</strong> Acesse <code>/enem/cor_outros/&lt;co_municipio&gt;</code> substituindo <code>&lt;co_municipio&gt;</code> pelo código do município desejado.</p>
+                <p class="mt-2"><strong>Exemplo:</strong> <code>/enem/cor_outros/3550308</code> - Total de alunos de outras raças em São Paulo</p>
+                <p class="mt-3"><strong>Formato JSON retornado:</strong></p>
+                <pre class="bg-light p-3 rounded">
+{
+    "co_municipio": 3550308,
+    "uf": "SP",
+    "municipio": "São Paulo",
+    "total_cor_outros": 12000
+}</pre>
+                {% elif 'masculino' in request.path %}
+                <p>Esta rota mostra o total de alunos do sexo masculino em um município específico. Os dados são somados de todos os anos disponíveis.</p>
+                <p class="mt-3"><strong>Como usar:</strong> Acesse <code>/enem/masculino/&lt;co_municipio&gt;</code> substituindo <code>&lt;co_municipio&gt;</code> pelo código do município desejado.</p>
+                <p class="mt-2"><strong>Exemplo:</strong> <code>/enem/masculino/3550308</code> - Total de alunos do sexo masculino em São Paulo</p>
+                <p class="mt-3"><strong>Formato JSON retornado:</strong></p>
+                <pre class="bg-light p-3 rounded">
+{
+    "co_municipio": 3550308,
+    "uf": "SP",
+    "municipio": "São Paulo",
+    "total_masculino": 20000
+}</pre>
+                {% elif 'feminino' in request.path %}
+                <p>Esta rota mostra o total de alunos do sexo feminino em um município específico. Os dados são somados de todos os anos disponíveis.</p>
+                <p class="mt-3"><strong>Como usar:</strong> Acesse <code>/enem/feminino/&lt;co_municipio&gt;</code> substituindo <code>&lt;co_municipio&gt;</code> pelo código do município desejado.</p>
+                <p class="mt-2"><strong>Exemplo:</strong> <code>/enem/feminino/3550308</code> - Total de alunos do sexo feminino em São Paulo</p>
+                <p class="mt-3"><strong>Formato JSON retornado:</strong></p>
+                <pre class="bg-light p-3 rounded">
+{
+    "co_municipio": 3550308,
+    "uf": "SP",
+    "municipio": "São Paulo",
+    "total_feminino": 22000
+}</pre>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Consultar Município</h5>
+            </div>
+            <div class="card-body">
+                <form action="{{ request.path }}" method="GET">
+                    <div class="mb-3">
+                        <label for="co_municipio" class="form-label">Código do Município</label>
+                        <input type="number" class="form-control" id="co_municipio" name="co_municipio" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Consultar</button>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div class="data-card">
+            <h3>{{ municipio }} - {{ uf }}</h3>
+            <p class="data-label">Código do Município: {{ co_municipio }}</p>
+            <div class="data-value">{{ metric_value }}</div>
+            <p class="data-label">{{ metric_name }}</p>
+        </div>
+
+        <div class="view-toggle">
+            <div class="btn-group">
+                <button type="button" class="btn active" onclick="showView('visual')">Visual</button>
+                <button type="button" class="btn" onclick="showView('json')">JSON</button>
+            </div>
+        </div>
+
+        <div class="json-view" id="jsonView">
+            {
+                "co_municipio": {{ co_municipio }},
+                "uf": "{{ uf }}",
+                "municipio": "{{ municipio }}",
+                "{{ metric_name.lower() }}": {{ metric_value }}
+            }
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function showView(view) {
+            const dataCard = document.querySelector('.data-card');
+            const jsonView = document.getElementById('jsonView');
+            const buttons = document.querySelectorAll('.view-toggle .btn');
+            
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (view === 'visual') {
+                dataCard.style.display = 'block';
+                jsonView.style.display = 'none';
+            } else {
+                dataCard.style.display = 'none';
+                jsonView.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html> 

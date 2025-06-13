@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dados INEP e ENEM</title>
+    <title>DADOS ENEM</title>
     <style>
         * {
             margin: 0;
@@ -47,10 +47,18 @@
             padding: 10px;
             border-radius: 5px;
             transition: background-color 0.3s;
+            font-size: 0.95em;
+        }
+
+        .sidebar-menu a i {
+            margin-right: 8px;
+            width: 20px;
+            text-align: center;
         }
 
         .sidebar-menu a:hover {
             background-color: #34495e;
+            transform: translateX(5px);
         }
 
         .main-content {
@@ -89,6 +97,16 @@
         tr:hover {
             background-color: #f1f1f1;
         }
+
+        .menu-category {
+            color: #95a5a6;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            padding: 5px 10px;
+            border-bottom: 1px solid #34495e;
+        }
     </style>
 </head>
 
@@ -97,14 +115,44 @@
         <h2>Menu</h2>
         <ul class="sidebar-menu">
             <li><a href="/"><i>📊</i> Dashboard</a></li>
-            <li><a href="/dados"><i>📋</i> Visualizar Dados</a></li>
-            <li><a href="/importar"><i>📤</i> Importar Dados</a></li>
-            <li><a href="/exportar"><i>📥</i> Exportar Dados</a></li>
+            
+            <li class="menu-category">📚 Desempenho Acadêmico</li>
+            <li><a href="/enem/humanas"><i>📝</i> Ciências Humanas</a></li>
+            <li><a href="/enem/natureza"><i>🔬</i> Ciências da Natureza</a></li>
+            <li><a href="/enem/linguagens"><i>📚</i> Linguagens</a></li>
+            <li><a href="/enem/matematica"><i>📐</i> Matemática</a></li>
+
+            <li class="menu-category">🏫 Tipo de Escola</li>
+            <li><a href="/enem/fed_priv"><i>🏛️</i> Federal/Particular</a></li>
+            <li><a href="/enem/est_mun"><i>🏢</i> Estadual/Municipal</a></li>
+
+            <li class="menu-category">💻 Acesso à Tecnologia</li>
+            <li><a href="/enem/s_pc"><i>💻</i> Com Computador</a></li>
+            <li><a href="/enem/n_pc"><i>❌</i> Sem Computador</a></li>
+            <li><a href="/enem/s_cel"><i>📱</i> Com Celular</a></li>
+            <li><a href="/enem/n_cel"><i>❌</i> Sem Celular</a></li>
+            <li><a href="/enem/s_int"><i>🌐</i> Com Internet</a></li>
+            <li><a href="/enem/n_int"><i>❌</i> Sem Internet</a></li>
+
+            <li class="menu-category">👥 Demografia</li>
+            <li><a href="/enem/cor_bra_ama"><i>👤</i> Brancos/Amarelos</a></li>
+            <li><a href="/enem/cor_outros"><i>👥</i> Outras Raças</a></li>
+            <li><a href="/enem/masculino"><i>👨</i> Masculino</a></li>
+            <li><a href="/enem/feminino"><i>👩</i> Feminino</a></li>
         </ul>
     </div>
 
     <div class="main-content">
-        <h1>Dados INEP e ENEM</h1>
+        <h1>DADOS ENEM</h1>
+        
+        <form action="/" method="GET" class="search-form" style="margin-bottom: 20px;">
+            <input type="text" name="municipio" placeholder="Digite o nome do município..." 
+                   value="{{ request.args.get('municipio', '') }}" 
+                   style="padding: 8px; width: 300px; border: 1px solid #ddd; border-radius: 4px;">
+            <button type="submit" style="padding: 8px 15px; background-color: #2c3e50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                Buscar
+            </button>
+        </form>
         
         <table>
             <thead>
@@ -112,13 +160,25 @@
                     <th>ID</th>
                     <th>Ano</th>
                     <th>Região</th>
-                    <th>Cód Região</th>
                     <th>UF</th>
-                    <th>Sigla UF</th>
-                    <th>Cód UF</th>
-                    <th>Município</th>
                     <th>Cód Município</th>
-                    <th>Internet/Computador</th>
+                    <th>Município</th>
+                    <th>Humanas</th>
+                    <th>Natureza</th>
+                    <th>Linguagens</th>
+                    <th>Matematica</th>
+                    <th>fed_priv</th>
+                    <th>est_mun</th>
+                    <th>s_pc</th>
+                    <th>n_pc</th>
+                    <th>s_cel</th>
+                    <th>n_cel</th>
+                    <th>s_int</th>
+                    <th>n_int</th>
+                    <th>cor_bra_ama</th>
+                    <th>cor_outros</th>
+                    <th>masculino</th>
+                    <th>feminino</th>
                 </tr>
             </thead>
             <tbody>

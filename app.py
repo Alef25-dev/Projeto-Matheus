@@ -5,12 +5,15 @@ from db import get_connection
 
 # import do blueprint
 from routes.internet import internet_bp
+from routes.enem import enem_bp
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
 # Registra o blueprint das rotas /internet
 app.register_blueprint(internet_bp)
+# Registra o blueprint das rotas /enem
+app.register_blueprint(enem_bp)
 
 # --- Resto das rotas diretamente aqui, se quiser ---
 @app.route('/')
@@ -18,7 +21,21 @@ def index():
     try:
         conn = get_connection()
         cur = conn.cursor()
-        cur.execute("SELECT * FROM microdados_ed_basica_2024 LIMIT 1000")
+        
+        # Get the search parameter
+        municipio = request.args.get('municipio', '')
+        
+        if municipio:
+            # If there's a search term, filter by municipality name
+            cur.execute("""
+                SELECT * FROM dados_enem 
+                WHERE LOWER(no_municipio_esc) LIKE LOWER(%s)
+                LIMIT 1000
+            """, (f'%{municipio}%',))
+        else:
+            # If no search term, get all records
+            cur.execute("SELECT * FROM dados_enem LIMIT 1000")
+            
         rows = cur.fetchall()
         cur.close()
         conn.close()
@@ -31,7 +48,7 @@ def exportar_csv():
     try:
         conn = get_connection()
         cur = conn.cursor()
-        cur.execute("SELECT * FROM microdados_ed_basica_2024")
+        cur.execute("SELECT * FROM dados_enem")
         dados = cur.fetchall()
         colunas = [desc[0] for desc in cur.description]
         cur.close()
@@ -46,7 +63,7 @@ def exportar_csv():
         return Response(
             output,
             mimetype='text/csv',
-            headers={"Content-Disposition": "attachment;filename=microdados_2024.csv"}
+            headers={"Content-Disposition": "attachment;filename=dados_enem.csv"}
         )
     except Exception as e:
         return f"Erro ao exportar: {e}"
@@ -66,11 +83,17 @@ def importar():
         cur = conn.cursor()
         for row in reader:
             cur.execute("""
-                INSERT INTO microdados_ed_basica_2024 (
-                    nu_ano_censo, no_regiao, co_regiao,
-                    no_uf, sg_uf, co_uf,
-                    no_municipio, co_municipio, in_acesso_internet_computador
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO dados_enem (
+    nu_ano, co_uf_esc, sg_uf_esc, co_municipio_esc, no_municipio_esc,
+    humanas, natureza, linguagens, matematica,
+    fed_priv, est_mun, s_pc, n_pc, s_cel, n_cel,
+    s_int, n_int, cor_bra_ama, cor_outros, masculino, feminino
+) VALUES (
+    %s, %s, %s, %s, %s,
+    %s, %s, %s, %s,
+    %s, %s, %s, %s, %s, %s,
+    %s, %s, %s, %s, %s, %s
+)
             """, row)
         conn.commit()
         cur.close()
